@@ -1,0 +1,47 @@
+﻿@page "/timer"
+@rendermode InteractiveWebAssembly
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Timer</h1>
+
+<p role="status">Seconds: @_currentSeconds</p>
+<button class="btn btn-primary" @onclick="StartStopTimer">@_timerButtonText</button>
+<button class="btn btn-primary" @onclick="ResetTimer">Reset Timer</button>
+
+@code {
+    private System.Timers.Timer _timer = new System.Timers.Timer(1000);
+    private int _currentSeconds = 0;
+    private bool _timerStarted = false;
+    private string _timerButtonText = "Start Timer";
+
+    protected override void OnInitialized()
+    {
+        _timer.Elapsed += async (sender, e) =>
+            {
+                _currentSeconds++;
+                await InvokeAsync(() => StateHasChanged());
+            };
+    }
+
+    private void StartStopTimer()
+    {
+        if (!_timerStarted)
+        {
+
+            _timer.Enabled = true;
+            _timerButtonText = "Stop Timer";
+        }
+        else
+        {
+            _timer.Enabled = false;
+            _timerButtonText = "Start Timer";
+        }
+        _timerStarted = !_timerStarted;
+    }
+
+    private void ResetTimer()
+    {
+        _currentSeconds = 0;
+    }
+}
